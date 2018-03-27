@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <RootNamespace>DataSourcery.Data</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.2.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\ClassLibraryCommon\Cauldron\*.cs">
+      <Link>Cauldron\%(FileName)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\ClassLibraryCommon\Source\*.cs">
+      <Link>Source\%(FileName)%(Extension)</Link>
+    </Compile>
+    <None Include="..\ClassLibraryCommon\Source\*.sql">
+      <Link>Source\%(FileName)%(Extension)</Link>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Common\*.cs">      
+    </Compile>
+    <Compile Include="..\Common\Core\*.cs">
+      <Link>Core\%(FileName)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="..\ClassLibraryCommon\SqlServer\ApiConnections.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\WindowsDesktop\DataSourcery.Data.Desktop.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="..\ClassLibraryCommon\Source\SinglePageTest.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="..\ClassLibraryCommon\SqlServer\SinglePageTest.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

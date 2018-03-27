@@ -6,23 +6,22 @@ validate and merge data from multiple heterogenous data sources on a continuous 
 ## Features
 
 - Supported Data Sources
-    - JSON files
-    - Microsoft SQL Server (starting with 2016)
+    - Microsoft SQL Server
+    - Azure SQL Database
+- Supported Data Sinks
+    - Microsoft SQL Server
     - Azure SQL Database
 - Extract Data
-    - Configure SQL statements to execute on local server and linked server objects to extract data
-    - Read/write watermark values that can be used with SQL statements to capture incremental changes to data
-    - Configure retry policy for handling transient network failure conditions
+    - Use SQL statements to extract data
+    - Use watermark values to capture incremental changes to data
 - Validate Data
-    - Configure SQL statements to execute on local server and linked server objects to validate data
+    - Use SQL statements to validate data (coming soon)
 - Merge Data
-    - Use partition keys, row keys and watermarks to apply changes to a homogenous data model
-- Deployment
-    - Package as IoT Edge Module to collect data from any location
+    - Merge data extracted from multiple data sources into a common data sink (coming soon)
 
 ## Versioning Information
 
-- The Data Cauldron Client Library uses [the semantic versioning scheme.](http://semver.org/)
+- The DataSourcery.Data client library uses [the semantic versioning scheme.](http://semver.org/)
 
 ## Download & Install
 
@@ -48,5 +47,4 @@ The desktop and phone libraries depend on Newtonsoft Json, which can be download
 We gladly accept community contributions.
 
 - Issues: Please report bugs using the Issues section of GitHub
-- Forums: Interact with the development teams on StackOverflow
-- Source Code Contributions: Please see [CONTRIBUTING.md](CONTRIBUTING.md) for instructions on how to contribute code.
+- Source Code Contributions: Coming soon.
