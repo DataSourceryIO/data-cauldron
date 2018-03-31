@@ -17,9 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\ClassLibraryCommon\Cauldron\*.cs">
-      <Link>Cauldron\%(FileName)%(Extension)</Link>
-    </Compile>
     <Compile Include="..\ClassLibraryCommon\Source\*.cs">
       <Link>Source\%(FileName)%(Extension)</Link>
     </Compile>
@@ -37,18 +34,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="..\ClassLibraryCommon\SqlServer\ApiConnections.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\lib\WindowsDesktop\DataSourcery.Data.Desktop.csproj" />
   </ItemGroup>
   
   <ItemGroup>
-    <None Update="..\ClassLibraryCommon\Source\SinglePageTest.sql">
+    <None Update="..\ClassLibraryCommon\Source\TestBasicRead.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="..\ClassLibraryCommon\SqlServer\SinglePageTest.sql">
+    <None Update="..\ClassLibraryCommon\Source\TestWatermarkRead.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

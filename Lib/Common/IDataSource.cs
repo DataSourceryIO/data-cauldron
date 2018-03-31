@@ -5,12 +5,10 @@ namespace DataSourcery.Data
 
     public interface IDataSource
     {
-        IDataSource SetConfiguration(string configuration);
+        IDataSource SetDataCauldron(Uri dataCauldronUri);
 
-        IDataSource SetPostExtractAction(Action<IDataSource, string> postExtractAction);
+        IDataSource LoadRecipe(string recipeName);
 
-        string Watermark { get; set; }
-
-        Task<int> Extract();
+        Task<int> InvokeRecipe();
     }
 }

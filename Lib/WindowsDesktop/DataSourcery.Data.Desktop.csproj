@@ -14,9 +14,6 @@
 
   <ItemGroup>
     <Compile Include="..\ClassLibraryCommon\*.cs" />
-    <Compile Include="..\ClassLibraryCommon\Cauldron\*.cs">
-      <Link>Cauldron\%(FileName)%(Extension)</Link>
-    </Compile>
     <Compile Include="..\ClassLibraryCommon\Source\*.cs">
       <Link>Source\%(FileName)%(Extension)</Link>
     </Compile>

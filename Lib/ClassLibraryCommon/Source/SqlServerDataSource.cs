@@ -7,7 +7,7 @@
     using Newtonsoft.Json;
     using System.Text.RegularExpressions;
 
-    public class SqlServerDataSource : IDataSource
+    public class SqlServerDataSource : DataSource
     {
         private const string watermark_pattern = @"{[\W]*watermark[\W]*,[\W]*([\S]+)[\W]*,[\W]*([\S]+)[\W]*}";
         private string watermarkKeyName = null;
@@ -15,24 +15,9 @@
         private int retryCount = 3;
         private readonly TimeSpan retryDelay = TimeSpan.FromSeconds(60);
 
-        private string _configuration = null;
-        private Action<IDataSource, string> _postExtractAction = null;
         private SqlConnection _connection;
 
-        public string Watermark { get; set; }
         public int PageSize { get; set; } = 1000;
-
-        public IDataSource SetConfiguration(string configuration)
-        {
-            _configuration = configuration;
-            return this;
-        }
-
-        public IDataSource SetPostExtractAction(Action<IDataSource, string> postExtractAction)
-        {
-            _postExtractAction = postExtractAction;
-            return this;
-        }
 
         public IDataSource SetConnection(SqlConnection connection)
         {
@@ -40,25 +25,23 @@
             return this;
         }
 
-        public async Task<int> Extract()
+        public override async Task<int> InvokeRecipe()
         {
-            string queryString = _configuration;
+            string queryString = Recipe.Implementation;
 
             Regex regex = new Regex(watermark_pattern, RegexOptions.IgnoreCase);
-            Match match = regex.Match(_configuration);
+            Match match = regex.Match(queryString);
             if (match.Success)
             {
                 watermarkKeyName = match.Groups[1].Value;
                 string defaultWatermarkValue = match.Groups[2].Value;
-                queryString = Regex.Replace(queryString, watermark_pattern, 
-                    String.IsNullOrEmpty(Watermark) ? defaultWatermarkValue : Watermark, RegexOptions.IgnoreCase);
+                queryString = Regex.Replace(queryString, watermark_pattern,
+                    String.IsNullOrEmpty(Recipe.Watermark) ? defaultWatermarkValue : Recipe.Watermark, RegexOptions.IgnoreCase);
             }
             return await ExecuteSQLWithBasicRetryAsync(queryString);
         }
 
-
-
-        async private Task<int> ExecuteSQLWithBasicRetryAsync(string sql)
+        private async Task<int> ExecuteSQLWithBasicRetryAsync(string sql)
         {
             int currentRetry = 0;
 
@@ -108,14 +91,14 @@
             _connection.Open();
 
             SqlDataReader reader = await command.ExecuteReaderAsync();
-            int result = Serialize(reader);
+            int result = await Serialize(reader);
 
             _connection.Close();
 
             return result;
         }
 
-        private int Serialize(SqlDataReader reader)
+        private async Task<int> Serialize(SqlDataReader reader)
         {
             var page = new List<Dictionary<string, object>>();
 
@@ -134,7 +117,8 @@
                 rowcount++;
                 if (rowcount % PageSize == 0)
                 {
-                    _postExtractAction?.Invoke(this, JsonConvert.SerializeObject(page, Formatting.None));
+                    // Don't update the watermark until the entire query has completed
+                    await PourDataIn(JsonConvert.SerializeObject(page, Formatting.None), null);
                     page = new List<Dictionary<string, object>>();
                 }
 
@@ -142,11 +126,11 @@
                 
                 if (watermark_col >= 0)
                 {
-                    Watermark = reader[watermark_col].ToString();
+                    Recipe.Watermark = reader[watermark_col].ToString();
                 }
             }
 
-            _postExtractAction?.Invoke(this, JsonConvert.SerializeObject(page, Formatting.None));
+            await PourDataIn(JsonConvert.SerializeObject(page, Formatting.None), Recipe.Watermark);
 
             return rowcount;
         }
